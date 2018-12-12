@@ -70,29 +70,32 @@ public class ValueIterationAgent extends PlanningValueAgent {
 		this.delta = 0.0;
 		// *** VOTRE CODE
 
-		Double max_courant = -Double.MAX_VALUE, somme_courante, new_min = Double.MAX_VALUE, new_max = -Double.MAX_VALUE;
-		for (Etat it_etatD : this.V.keySet()) {
-			max_courant = -1.0;
+		HashMap<Etat, Double> cloneV =(HashMap<Etat, Double>) this.V.clone();
+		
+		Double max_courant = 0.0, somme_courante, new_min = 100000000.0, new_max = 0.0;
+		for (Etat it_etatD : cloneV.keySet()) {
+			max_courant = 0.0;
 			for (Action it_action : this.mdp.getActionsPossibles(it_etatD)) {
 				somme_courante = getUpdate(it_etatD, it_action);
 				if (somme_courante > max_courant) {
 					max_courant = somme_courante;
 				}
 			}
-			this.V.put(it_etatD, max_courant);
-//			if(max_courant>new_max){
-//				this.vmax = max_courant;
-//			}else if(max_courant<new_min){
-//				this.vmin = max_courant;
-//			}
+			cloneV.put(it_etatD, max_courant);
+			
+			if(max_courant>new_max){
+				new_max = max_courant;
+			}else if(max_courant<new_min){
+				new_min = max_courant;
+			}
 		}
-
+		this.V = cloneV;
 		// mise a jour vmax et vmin pour affichage du gradient de couleur:
 		// vmax est la valeur max de V pour tout s
 		// vmin est la valeur min de V pour tout s
 		// ...
-		
-
+		this.vmax = new_max;
+		this.vmin = new_min;
 		// ******************* laisser notification a la fin de la methode
 		this.notifyObs();
 	}
@@ -133,7 +136,7 @@ public class ValueIterationAgent extends PlanningValueAgent {
 		// retourne action de meilleure valeur dans _e selon V,
 		// retourne liste vide si aucune action legale (etat absorbant)
 		List<Action> returnactions = new ArrayList<Action>();
-		Double max = -Double.MAX_VALUE, somme_courante;
+		Double max = -1.0, somme_courante;
 
 		for (Action action : mdp.getActionsPossibles(_e)) {
 			somme_courante = getUpdate(_e, action);
