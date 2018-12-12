@@ -120,7 +120,6 @@ public class ValueIterationAgent extends PlanningValueAgent {
 	@Override
 	public double getValeur(Etat _e) {
 		// *** VOTRE CODE
-
 		return this.V.get(_e);
 	}
 
