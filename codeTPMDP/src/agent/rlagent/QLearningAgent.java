@@ -79,6 +79,7 @@ public class QLearningAgent extends RLAgent {
 	public double getValeur(Etat e) {
 		// *** VOTRE CODE
 		double output = 0.0;
+		double min = 100000000.0;
 		if (!this.qvaleurs.containsKey(e)) {
 			return output;
 		}
@@ -87,6 +88,13 @@ public class QLearningAgent extends RLAgent {
 				output = this.getQValeur(e, it_action);
 			}
 		}
+		
+		// Màj de vmin et vmax
+		if(output>this.vmax)
+			this.vmax = output;
+		if(output<this.vmin)
+			this.vmin = output;
+		
 		return output;
 
 	}

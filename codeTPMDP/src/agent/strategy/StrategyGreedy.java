@@ -5,6 +5,7 @@ import java.util.Random;
 
 import agent.rlagent.RLAgent;
 import environnement.Action;
+import environnement.Action2D;
 import environnement.Etat;
 /**
  * Strategie qui renvoit un choix aleatoire avec proba epsilon, un choix glouton (suit la politique de l'agent) sinon
@@ -34,6 +35,27 @@ public class StrategyGreedy extends StrategyExploration{
 		}
 	
 		//VOTRE CODE ICI
+		if(d<epsilon){
+		// Exploration
+			int i_rand = rand.nextInt(4);
+			switch(i_rand){
+			case 0:
+				return Action2D.NORD;
+			case 1:
+				return Action2D.EST;
+			case 2:
+				return Action2D.SUD;
+			case 3:
+				return Action2D.OUEST;
+			}
+			
+		}else{
+		// Glouton	
+			
+			return this.agent.getPolitique(_e).get(0);
+			
+			
+		}
 		
 		return null;
 	}
