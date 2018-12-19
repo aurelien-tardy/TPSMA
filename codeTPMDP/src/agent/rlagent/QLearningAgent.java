@@ -36,7 +36,7 @@ public class QLearningAgent extends RLAgent {
 	public QLearningAgent(double alpha, double gamma, Environnement _env) {
 		super(alpha, gamma, _env);
 		qvaleurs = new HashMap<Etat, HashMap<Action, Double>>();
-		
+
 	}
 
 	/**
@@ -60,11 +60,11 @@ public class QLearningAgent extends RLAgent {
 		double max = 0.0;
 		Action it_max = null;
 		for (Action it_action : this.env.getActionsPossibles(e)) {
-			if (this.qvaleurs.get(e).get(it_action) >= max) {
-				if (this.qvaleurs.get(e).get(it_action).equals(max)) {
+			if (this.getQValeur(e, it_action) >= max) {
+				if (this.getQValeur(e, it_action)==max) {
 					returnactions.add(it_action);
 				} else {
-					max = this.qvaleurs.get(e).get(it_action);
+					max = this.getQValeur(e, it_action);
 					it_max = it_action;
 				}
 			}
@@ -79,12 +79,12 @@ public class QLearningAgent extends RLAgent {
 	public double getValeur(Etat e) {
 		// *** VOTRE CODE
 		double output = 0.0;
-		if(!this.qvaleurs.containsKey(e)){
+		if (!this.qvaleurs.containsKey(e)) {
 			return output;
 		}
 		for (Action it_action : this.qvaleurs.get(e).keySet()) {
-			if (this.qvaleurs.get(e).get(it_action) > output) {
-				output = this.qvaleurs.get(e).get(it_action);
+			if (this.getQValeur(e, it_action) > output) {
+				output = this.getQValeur(e, it_action);
 			}
 		}
 		return output;
@@ -94,19 +94,22 @@ public class QLearningAgent extends RLAgent {
 	@Override
 	public double getQValeur(Etat e, Action a) {
 		// *** VOTRE CODE
-		return this.qvaleurs.get(e).get(a);
+		double output = 0.0;
+		if (e != null && a != null && this.qvaleurs.get(e) != null && this.qvaleurs.get(e).get(a) != null)
+			output = this.qvaleurs.get(e).get(a);
+		return output;
 	}
 
 	@Override
 	public void setQValeur(Etat e, Action a, double d) {
 		// *** VOTRE CODE
 
-		if(!this.qvaleurs.containsKey(e)){
+		if (!this.qvaleurs.containsKey(e)) {
 			this.qvaleurs.put(e, new HashMap<Action, Double>());
 		}
-		
+
 		this.qvaleurs.get(e).put(a, d);
-		
+
 		// mise a jour vmax et vmin pour affichage du gradient de couleur:
 		// vmax est la valeur max de V pour tout s
 		// vmin est la valeur min de V pour tout s
@@ -133,22 +136,19 @@ public class QLearningAgent extends RLAgent {
 			System.out.println("QL mise a jour etat " + e + " action " + a + " etat' " + esuivant + " r " + reward);
 
 		// *** VOTRE CODE
-		
-		
-		
+
 		double maxActionSuivante = 0.0;
-		
+
 		for (Action it_action : this.env.getActionsPossibles(esuivant)) {
-			if(getQValeur(esuivant, it_action)>maxActionSuivante){
+			if (getQValeur(esuivant, it_action) > maxActionSuivante) {
 				maxActionSuivante = getQValeur(esuivant, it_action);
 			}
 		}
-		
-		double calcul = (1 - this.alpha)*getQValeur(e, a) + this.alpha*(reward+this.gamma*maxActionSuivante);
-		
+
+		double calcul = (1 - this.alpha) * getQValeur(e, a) + this.alpha * (reward + this.gamma * maxActionSuivante);
+
 		setQValeur(e, a, calcul);
-		
-		
+
 	}
 
 	@Override
