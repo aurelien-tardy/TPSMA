@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-
-
+/*======================================================================
+La classe a été modifiée (isWall, isFood, et isCapsule) afin que les méthodes
+vérifient elles-mêmes que (x,y) est bien dans le labyrinthe, et renvoient false sinon
+*/
 /**
  * Cette classe decrit un labyrinthe de pacman avec positions initiales des agents et des murs, dots, capsules (non modifiable)
  * 
@@ -185,8 +187,9 @@ public class MazePacman
 	 */
 	public boolean isWall(int x,int y) 
 	{
-		assert((x>=0) && (x<size_x));
-		assert((y>=0) && (y<size_y));
+		if( !( (x>=0) && (x<size_x) && (y>=0) && (y<size_y) ) ){
+			return false;
+		}
 		return(walls[x][y]);
 	}
 	
@@ -195,8 +198,9 @@ public class MazePacman
 	 */
 	public boolean isFood(int x,int y) 
 	{
-		assert((x>=0) && (x<size_x));
-		assert((y>=0) && (y<size_y));
+		if( !( (x>=0) && (x<size_x) && (y>=0) && (y<size_y) ) ){
+			return false;
+		}
 		return(food[x][y]);
 	}
 
@@ -205,8 +209,9 @@ public class MazePacman
 	 */
 	public boolean isCapsule(int x,int y) 
 	{
-		assert((x>=0) && (x<size_x));
-		assert((y>=0) && (y<size_y));
+		if( !( (x>=0) && (x<size_x) && (y>=0) && (y<size_y) ) ){
+			return false;
+		}
 		return(capsules[x][y]);
 	}
 	

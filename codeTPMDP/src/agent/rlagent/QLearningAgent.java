@@ -57,20 +57,29 @@ public class QLearningAgent extends RLAgent {
 			System.out.println("aucune action legale");
 			return new ArrayList<Action>();
 		}
-		double max = 0.0;
-		Action it_max = null;
-		for (Action it_action : this.env.getActionsPossibles(e)) {
-			if (this.getQValeur(e, it_action) >= max) {
-				if (this.getQValeur(e, it_action)==max) {
-					returnactions.add(it_action);
-				} else {
-					max = this.getQValeur(e, it_action);
-					it_max = it_action;
-				}
+		
+		// *** VOTRE CODE
+		
+		double bestQVal = 0.0;
+        //On parcourt les actions possibles
+		for(Action a : this.getActionsLegales(e)){
+            //Si c'est la première action qu'on considère
+			if(returnactions.size()==0){
+                //Alors c'est forcément la meilleure pour l'instant
+				bestQVal = this.getQValeur(e, a);
+				returnactions.add(a);
+			}
+			
+			if (this.getQValeur(e, a) > bestQVal){
+				bestQVal = this.getQValeur(e, a);
+				returnactions.clear();
+				returnactions.add(a);
+			}
+			if (this.getQValeur(e, a) == bestQVal){
+				returnactions.add(a);
 			}
 		}
-		returnactions.add(it_max);
-		// *** VOTRE CODE
+		
 		return returnactions;
 
 	}
@@ -78,14 +87,14 @@ public class QLearningAgent extends RLAgent {
 	@Override
 	public double getValeur(Etat e) {
 		// *** VOTRE CODE
-		double output = 0.0;
-		double min = 100000000.0;
-		if (!this.qvaleurs.containsKey(e)) {
-			return output;
-		}
-		for (Action it_action : this.qvaleurs.get(e).keySet()) {
-			if (this.getQValeur(e, it_action) > output) {
-				output = this.getQValeur(e, it_action);
+		double output = Double.NEGATIVE_INFINITY;
+		double val;
+		
+        //La valeur d'un état est la Q-valeur de la meilleure action possible depuis cet état
+		for(Action a: this.getActionsLegales(e)){
+			val = this.getQValeur(e, a);
+			if(val > output){
+				output = val;
 			}
 		}
 		
@@ -102,10 +111,13 @@ public class QLearningAgent extends RLAgent {
 	@Override
 	public double getQValeur(Etat e, Action a) {
 		// *** VOTRE CODE
-		double output = 0.0;
-		if (e != null && a != null && this.qvaleurs.get(e) != null && this.qvaleurs.get(e).get(a) != null)
-			output = this.qvaleurs.get(e).get(a);
-		return output;
+		if(!this.qvaleurs.containsKey(e) || !this.qvaleurs.get(e).containsKey(a)){
+            //Si on n'a jamais rencontré ce couple état/action, on renvoit 0
+			return 0.0;
+		}else{
+            //Sinon on lit simplement la valeur depuis l'attribut qvaleurs
+			return qvaleurs.get(e).get(a);
+		}
 	}
 
 	@Override
@@ -145,17 +157,8 @@ public class QLearningAgent extends RLAgent {
 
 		// *** VOTRE CODE
 
-		double maxActionSuivante = 0.0;
-
-		for (Action it_action : this.env.getActionsPossibles(esuivant)) {
-			if (getQValeur(esuivant, it_action) > maxActionSuivante) {
-				maxActionSuivante = getQValeur(esuivant, it_action);
-			}
-		}
-
-		double calcul = (1 - this.alpha) * getQValeur(e, a) + this.alpha * (reward + this.gamma * maxActionSuivante);
-
-		setQValeur(e, a, calcul);
+		double nouveauQ = (1-this.alpha)*this.getQValeur(e, a) + this.alpha*(reward + this.gamma*this.getValeur(esuivant));
+		this.setQValeur(e, a, nouveauQ);
 
 	}
 
@@ -168,15 +171,10 @@ public class QLearningAgent extends RLAgent {
 	@Override
 	public void reset() {
 		super.reset();
-		// *** VOTRE CODE
-		for (Etat it_etat : this.qvaleurs.keySet()) {
-			this.qvaleurs.get(it_etat).clear();
-			for (Action it_action : this.qvaleurs.get(it_etat).keySet()) {
-				this.qvaleurs.get(it_etat).put(it_action, 0.0);
-			}
-		}
-
-		this.episodeNb = 0;
+		//*** VOTRE CODE
+		this.qvaleurs = new HashMap<Etat, HashMap<Action,Double>>();
+		
+		this.episodeNb =0;
 		this.notifyObs();
 	}
 
