@@ -36,7 +36,7 @@ public class EtatPacmanMDPClassic implements Etat, Cloneable {
 		Boolean foundFood = false;
 		int distanceLook = 1;
 
-		while(distanceLook <= 4){
+		while(distanceLook <= 5){
 			foundFood = true;
 			if(maze.isFood(X, Y+distanceLook)){
 				positionsDots.add(X);
@@ -69,14 +69,17 @@ public class EtatPacmanMDPClassic implements Etat, Cloneable {
 			distanceLook++;
 		}
 
+		distanceLook = 4;
 		// On regarde si un fantôme se trouve autour du pacman
 		for (int j = 0; j < etat.getNumberOfGhosts(); j++) {
 			StateAgentPacman ghostState = etat.getGhostState(j);
 			int ghostX = ghostState.getX();
 			int ghostY = ghostState.getY();
 
-			positionsFantomes.add(ghostX);
-			positionsFantomes.add(ghostY);
+			if((ghostX - X <= distanceLook || ghostX - X >= -distanceLook) && (ghostY - Y <= distanceLook || ghostY - Y >= -distanceLook)){
+				positionsFantomes.add(ghostX);
+				positionsFantomes.add(ghostY);
+			}
 		}
 
 	}
@@ -120,8 +123,14 @@ public class EtatPacmanMDPClassic implements Etat, Cloneable {
 	public int hashCode() {
 		int result = positionsFantomes != null ? positionsFantomes.hashCode() : 0;
 		result = 31 * result + (positionsDots != null ? positionsDots.hashCode() : 0);
-		result = 31 * result + X + Y;
+		result = 31 * result;
 		return result;
+	}
+	
+	public int getDimensions(){
+		
+		
+		return 0;
 	}
 
 
