@@ -1,2 +1,3 @@
 # TPSMA
-TP1 SMA Planification stochastique et mdp (LM)
+TP1. Planification stochastique & MDP
+TP2. Apprentissage par renforcement
