@@ -20,6 +20,7 @@ public class EtatPacmanMDPClassic implements Etat, Cloneable {
 	protected transient StateGamePacman etat;
 	protected transient int X, Y;
 	protected transient MazePacman maze;
+	protected int tailleLook = 3;
 
 	public EtatPacmanMDPClassic(StateGamePacman _stategamepacman) {
 		etat = _stategamepacman;
@@ -36,7 +37,7 @@ public class EtatPacmanMDPClassic implements Etat, Cloneable {
 		Boolean foundFood = false;
 		int distanceLook = 1;
 
-		while(distanceLook <= 5){
+		while(distanceLook <= tailleLook){
 			foundFood = true;
 			if(maze.isFood(X, Y+distanceLook)){
 				positionsDots.add(X);
@@ -51,25 +52,29 @@ public class EtatPacmanMDPClassic implements Etat, Cloneable {
 				positionsDots.add(X-distanceLook);
 				positionsDots.add(Y);
 			}
-//			else{
-//				for(int i=0;i<=distanceLook;i++){
-//					dx = i;
-//					dy = distanceLook-i;
-//					if(maze.isFood(X+dx, Y+dy) || maze.isCapsule(X+dx, Y+dy)){ //1er quadrant
-//						foodSense = "1";
-//					}else if(maze.isFood(X-dx, Y+dy) || maze.isCapsule(X-dx, Y+dy)){ //2eme quadrant
-//						foodSense = "2";
-//					}else if(maze.isFood(X-dx, Y-dy) || maze.isCapsule(X-dx, Y-dy)){ //2eme quadrant
-//						foodSense = "3";
-//					}else if(maze.isFood(X+dx, Y-dy) || maze.isCapsule(X+dx, Y-dy)){ //2eme quadrant
-//						foodSense = "4";
-//					}
-//				}
-//			}
+			else{
+				for(int i=0;i<=distanceLook;i++){
+					dx = i;
+					dy = distanceLook-i;
+					if(maze.isFood(X+dx, Y+dy)){ //1er quadrant
+						positionsDots.add(X+dx);
+						positionsDots.add(Y+dy);
+					}else if(maze.isFood(X-dx, Y+dy)){ //2eme quadrant
+						positionsDots.add(X-dx);
+						positionsDots.add(Y+dy);
+					}else if(maze.isFood(X-dx, Y-dy)){ //3eme quadrant
+						positionsDots.add(X-dx);
+						positionsDots.add(Y-dy);
+					}else if(maze.isFood(X+dx, Y-dy)){ //4eme quadrant
+						positionsDots.add(X+dx);
+						positionsDots.add(Y-dy);
+					}
+				}
+			}
 			distanceLook++;
 		}
 
-		distanceLook = 4;
+		distanceLook = tailleLook+3;
 		// On regarde si un fantôme se trouve autour du pacman
 		for (int j = 0; j < etat.getNumberOfGhosts(); j++) {
 			StateAgentPacman ghostState = etat.getGhostState(j);
@@ -128,9 +133,13 @@ public class EtatPacmanMDPClassic implements Etat, Cloneable {
 	}
 	
 	public int getDimensions(){
+		int nbCases = tailleLook*tailleLook; 
 		
+		int f = 3;
+        for (int i=1; i<=nbCases; i++)
+        	f=3*f;
 		
-		return 0;
+		return f;
 	}
 
 

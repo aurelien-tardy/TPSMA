@@ -18,22 +18,37 @@ import javafx.util.Pair;
  */
 public class FeatureFunctionIdentity implements FeatureFunction {
 	//*** VOTRE CODE
+	protected int size;
+	protected HashMap<Pair<Etat, Action>, Double> features;
+	protected int index;
 	
 	public FeatureFunctionIdentity(int _nbEtat, int _nbAction){
 		//*** VOTRE CODE
+		this.size = _nbEtat*_nbAction;
+		this.index = 0;
+		this.features = new HashMap<>();
 	}
 	
 	@Override
 	public int getFeatureNb() {
 		//*** VOTRE CODE
-		return 0;
+		return size;
 	}
 
 	@Override
 	public double[] getFeatures(Etat e,Action a){
 		//*** VOTRE CODE
-		
-		return null;
+		double[] output = new double[size];
+		features.put(new Pair<>(e,a), 1.0);
+		for(int i = 0 ; i<size ; i++){
+			if(i == index){
+				output[i] = 1.0;
+				break;
+			}
+			output[i] = 0.0;
+		}
+		index++;
+		return output;
 	}
 	
 
